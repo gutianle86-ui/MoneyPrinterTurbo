@@ -1,559 +1,187 @@
-<div align="center">
+# 幕间 · AI 视频工作台
 
-# MoneyPrinterTurbo 💸
+一个本地运行的 AI 短片制作工具。前端使用 **Vue 3 + TypeScript + Vite**，后端使用 **FastAPI**。开发时分开运行，日常使用时由 FastAPI 同时提供 Vue 构建产物、API 和素材，一个 Python 服务即可启动整个工作台。
 
-### 一站式 AI 短视频生成工具
+## 首次安装与构建
 
-只需提供视频<b>主题</b>或<b>关键词</b>，即可自动生成视频脚本、匹配素材、生成字幕和背景音乐，并合成高清短视频。
+需要 Python 3.11+、Node.js 22.12+（22.x）或 24+。在项目根目录执行：
 
-[![Version](https://img.shields.io/github/v/release/harry0703/MoneyPrinterTurbo?color=blue&label=version)](https://github.com/harry0703/MoneyPrinterTurbo/releases)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/harry0703/MoneyPrinterTurbo/releases/latest)
-[![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Downloads](https://img.shields.io/github/downloads/harry0703/MoneyPrinterTurbo/total)](https://github.com/harry0703/MoneyPrinterTurbo/releases/latest)
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+npm --prefix frontend ci
+npm --prefix frontend run build
+.venv/bin/python main.py
+```
 
-<a href="https://trendshift.io/repositories/8731" target="_blank"><img src="https://trendshift.io/api/badge/repositories/8731" alt="harry0703%2FMoneyPrinterTurbo | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-<a href="https://www.star-history.com/harry0703/moneyprinterturbo"><img src="https://api.star-history.com/badge?repo=harry0703/MoneyPrinterTurbo" alt="Star History Rank" style="height: 55px;" height="55"/></a>
+浏览器打开 http://127.0.0.1:8765/ 。不要直接双击 HTML 文件。端口可用 `--port 8766` 修改。Windows 将 `.venv/bin/python` 换成 `.venv\Scripts\python.exe`。
 
-简体中文 | [English](README-en.md) | [日本語](README-ja.md) | [版本发布](https://github.com/harry0703/MoneyPrinterTurbo/releases) | [问题反馈](https://github.com/harry0703/MoneyPrinterTurbo/issues)
+前端已经构建好后，日常只运行 `.venv/bin/python main.py`，Mac 也可以双击 `drama.command`。运行构建产物无需 Node.js 或 Vite 服务。前端代码修改后需重新构建；构建完成后刷新页面即可。更新 Python 后需重启服务。
 
-</div>
+`frontend/dist/` 是生成目录，不提交到 Git。新克隆或部署到另一台机器时需先构建，或将已构建的整个 `dist/` 一并复制。如果缺少构建产物，首页会返回明确的构建提示，API 仍可使用。
 
-## 界面预览 🖥️
+## 前端开发与热更新
 
-<h4 align="center">WebUI</h4>
+在两个终端分别运行：
 
-![](docs/webui.jpg)
+```bash
+# 终端一：项目根目录，启动 Python 后端
+.venv/bin/python main.py --reload
 
-<h4 align="center">API</h4>
+# 终端二：项目根目录，启动 Vue 开发服务器
+npm --prefix frontend run dev
+```
 
-![](docs/api.jpg)
+开发页面打开 http://127.0.0.1:5173/ 。Vite 将 `/api`、`/assets` 和 `/openapi.json` 代理到 FastAPI，Vue 修改会热更新，无需每次构建。开发代理会将请求的 Host/Origin 对齐后端地址，FastAPI 原有的本机访问与写请求标识检查仍保留。
 
----
+后端使用其他端口时，通过 `DRAMA_API_URL` 指定代理目标，例如：
 
-## 特别感谢 ❤️
+```bash
+DRAMA_API_URL=http://127.0.0.1:8766 npm --prefix frontend run dev
+```
 
-<div align="center">
-  <a href="https://platform.kimi.com?track_id=track-2f5441d6ffd84c509dd079d78e9db5dc&aff=moneyprinterturbo" target="_blank"><img src="https://gcdn.moonshot.cn/growth-cdn/sponsor/kimi-zh.png" alt="Kimi 赞助 MoneyPrinterTurbo" width="100%"></a>
-</div>
-
-感谢 [Kimi](https://platform.kimi.com?track_id=track-2f5441d6ffd84c509dd079d78e9db5dc&aff=moneyprinterturbo) 赞助本项目！[Kimi K3](https://www.kimi.com/blog/kimi-k3?aff=moneyprinterturbo) 是 Moonshot AI 迄今能力最强的模型，也是全球首个开源 3T 级模型，拥有原生视觉能力与 100 万 Token 上下文，在知识工作、推理和长周期任务中展现前沿性能。在 MoneyPrinterTurbo 中，K3 能直接驱动视频创作，不仅撰写视频文案，还会提炼素材搜索关键词、决定成片画面；对内容理解越准确，匹配到的素材就越贴题。
-
-**MoneyPrinterTurbo 用户专属优惠：新用户通过专属链接注册，首次成功充值可获充值金额 10% 的 API 额度，最高赠送 ¥1000。活动截至 2026 年 9 月 30 日。前往 Kimi 开放平台（[中文站](https://platform.kimi.com?track_id=track-2f5441d6ffd84c509dd079d78e9db5dc&aff=moneyprinterturbo)｜[Global](https://platform.kimi.ai?track_id=track-f6b0a640d35c41deb03b247242a1058c&aff=moneyprinterturbo)）体验 API。**
-<br>
-
-<table align="center">
-  <tr>
-    <td align="center" width="120">
-      <a href="https://www.volcengine.com/activity/ai618?utm_campaign=hw&utm_content=hw&utm_medium=devrel_tool_web&utm_source=OWO&utm_term=MoneyPrinterTurbo"><img src="docs/sponsors/volcengine-logo.svg" alt="火山引擎" height="32"></a><br>
-      <a href="https://www.volcengine.com/activity/ai618?utm_campaign=hw&utm_content=hw&utm_medium=devrel_tool_web&utm_source=OWO&utm_term=MoneyPrinterTurbo"><strong>火山引擎</strong></a>
-    </td>
-    <td align="left">
-      感谢字节火山引擎赞助本项目！火山方舟 Agent/Coding Plan 国模套餐<strong>首购 9.9</strong>，支持 GLM-5.3、Kimi-K3、DeepSeek、MiniMax、Doubao 等，注册免费领 <strong>2500w Token</strong>，统一 API，适配编码与智能体开发。--&gt; <a href="https://www.volcengine.com/activity/ai618?utm_campaign=hw&utm_content=hw&utm_medium=devrel_tool_web&utm_source=OWO&utm_term=MoneyPrinterTurbo">立即前往</a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
-      <a href="https://www.ccsub.net/register?ref=VCVDAWWY"><img src="docs/sponsors/ccsub-logo.png" alt="CCSub" height="36"></a><br>
-      <a href="https://www.ccsub.net/register?ref=VCVDAWWY"><strong>CCSub</strong></a>
-    </td>
-    <td align="left">
-      感谢 <a href="https://www.ccsub.net/register?ref=VCVDAWWY">CCSub</a> 赞助本项目！<strong>CCSub 是稳定、实惠的 AI API 中转平台，是 Claude Code 官方订阅的超强平替。</strong>一个 API Key 即可调用 Claude Opus 4.8、Sonnet 4.6、Haiku 4.5、GPT-5、Gemini 等模型，价格约为官方直连的 1/3，全球直连无需梯子。兼容 Claude Code、Codex、Cursor、Cline、Continue、Windsurf 等所有主流 AI 编程工具。前往 <a href="https://www.ccsub.net/register?ref=VCVDAWWY">www.ccsub.net</a> 注册即送 $5 体验额度。
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
-      <a href="https://go.apimart.ai/gh-moneyprinterturbo"><img src="docs/sponsors/apimart-logo.png" alt="APIMart" width="100"></a>
-    </td>
-    <td align="left">
-      感谢 <a href="https://go.apimart.ai/gh-moneyprinterturbo">APIMart</a> 赞助了本项目！APIMart 是专注 AI 图片/视频生成的低价 API 平台，<strong>GPT-Image-2 低至 &#36;0.006/张，1 美元可出图 160+ 张</strong>。<strong>图片、视频一套异步 API 通吃，换模型不改代码</strong>；提交任务拿 ID，通过轮询或回调获取结果，支持万张级批量生成。按量付费、无月费，通过<a href="https://go.apimart.ai/gh-moneyprinterturbo">此注册链接</a>注册即可开用。
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
-      <a href="https://infistar.cc/register?aff=6T4EYXP2&amp;ref_source=link"><img src="docs/sponsors/infistar-logo.svg" alt="Infistar.ai 无限星河" height="56"></a><br>
-      <a href="https://infistar.cc/register?aff=6T4EYXP2&amp;ref_source=link"><strong>Infistar.ai 无限星河</strong></a>
-    </td>
-    <td align="left">
-      感谢 <a href="https://infistar.cc/register?aff=6T4EYXP2&amp;ref_source=link">Infistar.ai 无限星河</a> 赞助本项目！<br>
-      ⚡ 超低成本与稳定调度：价格低至官方 1 折，模型倍率与调用明细全程透明；多路供应动态调度，告别限流与断连困扰。<br>
-      🧠 全系大模型完美驱动脚本：全面覆盖 OpenAI、Claude、Google Gemini、DeepSeek、通义千问（Qwen）等主流 LLM，兼容 OpenAI 标准接口，为 MoneyPrinterTurbo 的文案生成与素材关键词提炼提供低延迟、高并发支持。<br>
-      🎨 前沿多模态生态：全面接入 FLUX、Midjourney、Seedance、可灵（Kling）、Sora、Luma 等顶级生图与视频模型，满足下一代 AI 视频生成需求。<br>
-      🎁 MoneyPrinterTurbo 用户专属福利：通过 <a href="https://infistar.cc/register?aff=6T4EYXP2&amp;ref_source=link">专属推广链接</a> 注册即享 [专属赠送额度 / 首充特惠]，开箱即用！
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
-      <a href="https://www.shengsuanyun.com/?from=CH_XUQ4OTSK"><img src="docs/sponsors/shengsuanyun-logo.jpg" alt="胜算云" height="56"></a><br>
-      <a href="https://www.shengsuanyun.com/?from=CH_XUQ4OTSK"><strong>胜算云</strong></a>
-    </td>
-    <td align="left">
-      感谢<a href="https://www.shengsuanyun.com/?from=CH_XUQ4OTSK">胜算云</a>对本项目的赞助！胜算云是面向 AI 原生团队的模型 API 聚合平台，汇集 Claude、ChatGPT、Gemini 等海内外大语言模型及多媒体模型，支持统一接入与按量调用。<br>
-      平台坚持合规 API 服务，杜绝逆向工程和资源稀释。此外平台提供企业级定制网关，包括团队成本与权限管理、智能路由、安全防护及 BYOK 密钥托管，并提供发票服务。<br>
-      🎁新用户通过<a href="https://www.shengsuanyun.com/?from=CH_XUQ4OTSK">此链接</a>注册，即可领取 10 元 Token 体验额度。
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
-      <a href="https://reccloud.cn"><img src="docs/sponsors/reccloud-logo.svg" alt="录咖" height="36"></a><br>
-      <a href="https://reccloud.cn"><strong>录咖 AI</strong></a>
-    </td>
-    <td align="left">
-      由于该项目的 <strong>部署</strong> 和 <strong>使用</strong>，对于一些小白用户来说，还是 <strong>有一定的门槛</strong>，在此特别感谢 <a href="https://reccloud.cn">录咖（AI智能 多媒体服务平台）</a> 网站基于该项目，提供的免费 <code>AI视频生成器</code> 服务，可以不用部署，直接在线使用，非常方便。
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
-      <a href="https://picwish.cn"><img src="docs/sponsors/picwish-logo.svg" alt="佐糖" height="36"></a><br>
-      <a href="https://picwish.cn"><strong>佐糖</strong></a>
-    </td>
-    <td align="left">
-      感谢 <a href="https://picwish.cn">佐糖</a> 对该项目的支持和赞助，使得该项目能够持续的更新和维护。佐糖专注于<strong>图像处理领域</strong>，提供丰富的<strong>图像处理工具</strong>，将复杂操作极致简化，真正实现让图像处理更简单。
-    </td>
-  </tr>
-</table>
-
-## 作者的另一个开源项目：MangoDisk ⭐
-
-<p align="center">
-  <a href="https://mangodisk.app/zh">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://assets.mangodisk.app/images/screenshots/zh/dark-01-deep-cleanup.jpg">
-      <source media="(prefers-color-scheme: light)" srcset="https://assets.mangodisk.app/images/screenshots/zh/light-01-deep-cleanup.jpg">
-      <img src="https://assets.mangodisk.app/images/screenshots/zh/light-01-deep-cleanup.jpg" width="900" alt="MangoDisk 深度清理界面">
-    </picture>
-  </a>
-</p>
-
-<p align="center">
-  <strong>面向 macOS 和 Windows 的开源磁盘清理、空间分析与系统优化工具</strong><br>
-  一站式清理缓存、大文件、重复文件和应用残留，并提供磁盘空间分析、应用卸载、启动项管理、系统优化与维护
-</p>
-
-<p align="center">
-  <a href="https://mangodisk.app/zh">访问 MangoDisk 官网</a> · <a href="https://github.com/harry0703/MangoDisk">查看 GitHub 开源项目</a>
-</p>
-
----
-
-## 功能特性 🎯
-
-- [x] 提供 **AI Agent**、**WebUI**、**API** 和 **CLI** 四种使用方式，代码按控制器、服务和模型等职责分层
-- [x] 支持 **AI 自动生成视频脚本**，也可以使用自定义脚本
-- [x] 支持多种 **高清视频** 尺寸
-  - [x] 竖屏 9:16，`1080x1920`
-  - [x] 横屏 16:9，`1920x1080`
-- [x] 支持 **批量视频生成**，可以一次生成多个视频，然后选择一个最满意的
-- [x] 支持 **视频片段时长** 设置，方便调节素材切换频率
-- [x] 支持 **多语言视频脚本** 生成
-- [x] 支持 **Edge TTS**、**Azure Speech**、**SiliconFlow**、**Google Gemini**、**小米 MiMo**、**ElevenLabs**、**Chatterbox** 和 **Fish Audio** 语音合成，可实时试听
-- [x] 支持 **字幕生成**，可调整字体、位置、颜色、大小、描边和背景样式
-- [x] 支持 **背景音乐**，可随机选择或使用指定音乐，并调整音量
-- [x] 支持使用自己的 **本地素材**，也可从 **Pexels**、**Pixabay** 和 **Coverr** 获取可免费使用的高清素材
-- [x] 支持 **AI 生成素材**：接入 [WaveSpeed AI](https://wavespeed.ai) 文生视频模型（默认 Seedance），按脚本关键词直接生成全新画面，不再受限于库存素材
-- [x] 原生支持 **火山引擎方舟 Seedance** 文生视频，可配置模型或推理接入点 ID，并提供有限轮询与付费任务确认
-- [x] 支持 **Kimi / Moonshot AI**、**OpenAI**、**Anthropic Claude**、**Google Gemini**、**DeepSeek**、**阿里云通义千问**、**Microsoft Azure OpenAI**、**火山引擎方舟**、**xAI Grok**、**MiniMax**、**小米 MiMo** 等主流模型服务，并兼容 **Cloudflare AI Gateway**、**魔搭 ModelScope**、**AIHubMix**、**AIML API**、**EvoLink**、**Ollama**、**OneAPI**、**LiteLLM**、**Groq**、**Pollinations AI** 等统一网关、聚合平台和本地运行环境
-- [x] 支持一键 **跨平台发布**，生成完成后可自动上传至 **TikTok**、**Instagram** 和 **YouTube Shorts**
-- [x] 支持将生成设置**导出和导入**为预设文件，并在设置弹窗中备份和恢复所有 **API Key**
-
-## 作品展示 🎬
-
-以下示例均由 MoneyPrinterTurbo 实际生成。
-
-### 竖屏 9:16
-
-<table width="100%">
-<tr>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=03-zh-portrait-city-morning.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/03-zh-portrait-city-morning.jpg" width="180" alt="城市醒来的时刻"></a><br><strong>城市醒来的时刻</strong><br>中文 · 14 秒</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=05-zh-portrait-clean-energy.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/05-zh-portrait-clean-energy.jpg" width="180" alt="清洁能源的未来"></a><br><strong>清洁能源的未来</strong><br>中文 · 24 秒</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=07-zh-portrait-space-exploration.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/07-zh-portrait-space-exploration.jpg" width="180" alt="为什么我们仍要探索太空"></a><br><strong>为什么我们仍要探索太空</strong><br>中文 · 27 秒</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=17-zh-portrait-seed-journey.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/17-zh-portrait-seed-journey.jpg" width="180" alt="一粒种子的旅程"></a><br><strong>一粒种子的旅程</strong><br>中文 · 44 秒</td>
-</tr>
-<tr>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=09-en-portrait-future-robotics.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/09-en-portrait-future-robotics.jpg" width="180" alt="The Future of Everyday Robotics"></a><br><strong>The Future of Everyday Robotics</strong><br>English · 21 sec</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=11-en-portrait-small-habits.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/11-en-portrait-small-habits.jpg" width="180" alt="Small Habits, Lasting Change"></a><br><strong>Small Habits, Lasting Change</strong><br>English · 19 sec</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=13-en-portrait-creative-work.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/13-en-portrait-creative-work.jpg" width="180" alt="Making Space for Creative Work"></a><br><strong>Making Space for Creative Work</strong><br>English · 20 sec</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=15-en-portrait-coffee-science.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/15-en-portrait-coffee-science.jpg" width="180" alt="The Science Inside Coffee"></a><br><strong>The Science Inside Coffee</strong><br>English · 23 sec</td>
-</tr>
-</table>
-
-### 横屏 16:9
-
-<table width="100%">
-<tr>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=02-zh-landscape-deep-ocean.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/02-zh-landscape-deep-ocean.jpg" width="280" alt="深海里的微光"></a><br><strong>深海里的微光</strong><br>中文 · 23 秒</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=04-zh-landscape-reading-power.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/04-zh-landscape-reading-power.jpg" width="280" alt="阅读如何塑造我们"></a><br><strong>阅读如何塑造我们</strong><br>中文 · 23 秒</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=06-zh-landscape-pour-over-coffee.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/06-zh-landscape-pour-over-coffee.jpg" width="280" alt="一杯手冲咖啡的细节"></a><br><strong>一杯手冲咖啡的细节</strong><br>中文 · 23 秒</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=08-zh-landscape-spring-journey.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/08-zh-landscape-spring-journey.jpg" width="280" alt="春天适合出发"></a><br><strong>春天适合出发</strong><br>中文 · 14 秒</td>
-</tr>
-<tr>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=10-en-landscape-ocean-conservation.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/10-en-landscape-ocean-conservation.jpg" width="280" alt="Why Ocean Conservation Matters"></a><br><strong>Why Ocean Conservation Matters</strong><br>English · 25 sec</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=14-en-landscape-sustainable-cities.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/14-en-landscape-sustainable-cities.jpg" width="280" alt="Designing More Sustainable Cities"></a><br><strong>Designing More Sustainable Cities</strong><br>English · 27 sec</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=16-en-landscape-mountain-perspective.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/16-en-landscape-mountain-perspective.jpg" width="280" alt="What Mountains Teach Us"></a><br><strong>What Mountains Teach Us</strong><br>English · 18 sec</td>
-<td align="center" width="25%"><a href="https://harry0703.github.io/mpt-assets/?video=18-en-landscape-history-of-flight.mp4"><img src="https://github.com/harry0703/mpt-assets/releases/download/assets/18-en-landscape-history-of-flight.jpg" width="280" alt="A Brief History of Human Flight"></a><br><strong>A Brief History of Human Flight</strong><br>English · 59 sec</td>
-</tr>
-</table>
-
-## 配置要求 📦
-
-- 建议系统：Windows 10、macOS 11.0 或更高版本，以及主流 Linux 发行版
-- 本地部署需要 Python 3.11 或更高版本，推荐使用 Python 3.11
-- GPU 不是必需项，但如果你希望本地转录、更快的视频处理或更顺畅的批量生成体验，建议使用带显存的独立显卡
-
-| 项目 | 最低配置 | 推荐配置        | 理想配置        |
-| ---- | -------- | --------------- | --------------- |
-| CPU  | 4 核     | 6 到 8 核       | 8 核及以上      |
-| RAM  | 4 GB     | 8 GB            | 16 GB 及以上    |
-| GPU  | 非必须   | 4 GB 显存及以上 | 8 GB 显存及以上 |
-
-- 如果你主要依赖云端 LLM、云端 TTS 和在线素材源，CPU 与内存比 GPU 更重要
-- 如果你启用 `faster-whisper`、批量生成或更重的本地处理链路，GPU 会明显提升速度
-
-## 快速开始 🚀
-
-### 推荐使用方式
-
-- 不想手动安装和配置：直接使用 AI Agent 生成视频
-- Windows 用户：优先使用一键启动包，适合快速体验
-- macOS / Linux 用户：优先使用 `uv` 进行本地部署
-- 想要隔离运行环境：优先使用 Docker 部署
-
-### 使用 AI Agent 生成视频
-
-如果你的 AI Agent 支持读取 Skill 文档并操作本地终端，可以直接发送下面这段话。Agent 会自动完成安装、配置和视频生成；只有缺少必要的 API Key 时才会向你询问，完成后会返回生成的视频文件路径。目前支持 macOS 和 Windows。
+## 目录：从哪里开始二开
 
 ```text
-使用这个 Skill：https://raw.githubusercontent.com/harry0703/MoneyPrinterTurbo/main/docs/skill/SKILL.md
-帮我生成一个主题为“人工智能如何改变普通人的日常生活”的视频。
+frontend/
+  package.json             Vue、Vite、TypeScript、测试及构建命令
+  package-lock.json        锁定依赖，使用 npm ci 安装
+  vite.config.ts           本地开发代理及构建配置
+  index.html               Vue 挂载入口
+  src/
+    main.ts                Vue 启动入口
+    App.vue                工作台布局、项目切换和模型选择
+    api.ts                 类型化请求封装和业务 API
+    types.ts               项目、角色、镜头、候选与导出数据类型
+    domain.ts              候选选择、导出版本等纯业务选择器
+    composables/useStudio.ts  响应式状态、操作互斥、轮询与通知
+    views/                 五个制作步骤的 Vue 页面
+    components/            状态条、工作流、素材及成本等组件
+    dialogs/               项目、分镜、候选对比、服务设置等表单
+    style.css              工作台样式
+  tests/                   请求、轮询并发及 Vue 表单回归测试
+  dist/                    构建产物，由 FastAPI 提供（Git 忽略）
+backend/
+  api.py                   FastAPI 路由及 Vue 构建产物挂载
+  services.py              项目管理、后台任务、审核、候选和导出
+  workflow.py              策划、制作前检查及预演与样片审核
+  economics.py             生成预估、选用素材与归档成本统计
+  styles.py                画风预设与画风变更规则
+  providers.py             模型服务适配
+  media.py                 FFmpeg 合成、字幕、音轨与媒体检查
+  schemas.py               Pydantic 请求校验
+  storage.py               JSON 持久化、原子保存与中断恢复
+main.py                    启动入口
+requirements.txt           Python 运行依赖
+requirements-dev.txt       Python 检查与测试依赖
+pyproject.toml             pytest 和 Ruff 配置
+drama.command              Mac 日常启动脚本
+storage/drama/             既有配置、作品、候选与成片，原路径保留
+tests/                     后端回归测试
+.github/workflows/ci.yml    Vue 构建、前端测试和 Python 检查
 ```
 
-### 在 Google Colab 中运行
+从前端开始阅读：`frontend/src/App.vue → views/ → composables/useStudio.ts → api.ts → backend/api.py`。所有 HTTP 方法和路径集中在 `api.ts`；页面使用 Vue 模板、表单绑定和组件事件，不再拼接 HTML 或委托整页点击事件。共享状态使用 Composition API，不额外引入状态库。
 
-免去本地环境配置，点击直接在 Google Colab 中快速体验 MoneyPrinterTurbo
+| 想修改什么 | 主要文件 |
+|---|---|
+| 页面布局和交互 | `frontend/src/views/`、`components/`、`dialogs/` |
+| 页面共享状态和轮询 | `frontend/src/composables/useStudio.ts` |
+| 前端 API 和数据类型 | `frontend/src/api.ts`、`types.ts` |
+| 模型服务、请求参数和下载方式 | `backend/providers.py` |
+| 审核、候选筛选、任务调度 | `backend/services.py` |
+| 分辨率、音轨、字幕和编码参数 | `backend/media.py` |
+| 后端输入校验 | `backend/schemas.py` |
+| 数据持久化 | `backend/storage.py` |
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/harry0703/MoneyPrinterTurbo/blob/main/docs/MoneyPrinterTurbo.ipynb)
+后端接口结构可查看 http://127.0.0.1:8765/openapi.json 。
 
-### Windows 一键启动包
+## 制作视频
 
-下载一键启动包，解压直接使用（路径不要有 **中文**、**特殊字符**、**空格**）
+先在页面“服务设置”配置文本模型与 Seedance 的服务地址、模型、API Key，以及每秒视频费用估算。配置统一保存在 `storage/drama/settings.json`；视频密钥为空时兼容读取 `VOLCENGINE_ARK_API_KEY` 环境变量。已移除旧 MoneyPrinterTurbo 的 `config.toml` 兼容读取。
 
-- GitHub Releases：https://github.com/harry0703/MoneyPrinterTurbo/releases/latest
+文本服务默认继承进程的 `HTTP_PROXY` / `HTTPS_PROXY` 等环境代理。若代理不可用，可在“文本连接方式”选择“直连”，保存后立即对后续文本请求生效；该设置不影响 Seedance。文本请求不会自动重试，超时也不自动换路线重发，避免重复计费。
 
-下载后，建议先**双击执行** `update.bat` 更新到**最新代码**，然后双击 `start.bat` 启动
+页面顶部可直接切换 **Seedance 2.5 / Seedance 2.0 mini**，选择后自动保存；服务设置也提供相同的模型预设。两者共用方舟地址和密钥，DeepSeek 配置保持不变。模型 ID 已通过配置的方舟 `/models` 只读接口核对：`doubao-seedance-2-5-260628`、`doubao-seedance-2-0-mini-260615`；是否能实际调用仍取决于账号开通情况与余额。
 
-启动后，会自动打开浏览器（如果打开是空白，建议换成 **Chrome** 或者 **Edge** 打开）
+逐镜头生成使用720p并请求原生声音。全部选用mini候选的正式成片导出720p；其余正式合成使用1080p，导出清单记录实际输出分辨率。切换模型只影响后续生成，已有候选不会被重新提交。
 
-## 安装部署 📥
+`seedance_estimates` 分别记住每个模型的每秒费用预估，`estimate_per_second` 表示当前选中模型的值。既有2.5预算设置保留；mini首次选择使用0.6元/秒作为可编辑的保守预算参考值（按保存的官方刊例价估算并留余量，不使用限时折扣）。这是预算参考，不是实时价格或实际账单。参考来源：https://docs.volcengine.com/docs/82379/1544106 。模型预设及规格集中放在 `backend/providers.py` 的 `VIDEO_MODELS`。
 
-### 前提条件
+### 制作形式
 
-- 本地部署需要 Python 3.11 或更高版本
-- Windows 用户建议避免使用包含中文、特殊字符或空格的项目路径
+新项目默认“对话短剧”。项目设置还可选“旁白推文”或“混合形式”；旧项目保留原形式。对话与混合策划按场景、动作、说话人、台词、情绪保存，分镜按来源段落核对台词、说话人和顺序，支持无声反应镜头。切换形式使相关审核失效，不会自动改写已有草稿。角色声音设定与台词表演要求会进入视频提示词，但不保证跨镜头音色锁定。
 
-#### ① 克隆代码
+### 统一画风
 
-```shell
-git clone https://github.com/harry0703/MoneyPrinterTurbo.git
+新项目默认选择“自动推荐”，无需手写画风。点击“AI 起草策划”时，文本模型会在同一次请求中返回策划、画风和推荐理由；在故事页点击“采用推荐画风”后再生成分镜。创建项目本身不调用模型。手动填写策划的项目也可以单独推荐画风（文本计费）。
+
+也可在创建项目或项目设置中直接选择都市甜宠、古风言情、悬疑惊悚、玄幻热血、都市情感预设，或选择自定义。预设不调用模型；个人预设可命名保存，保存在 `storage/drama/style-presets.json`，以后创建项目可直接选用。
+
+确认后的画风由项目内所有分镜和视频提示词继承；重新起草策划不会自动替换已确认的画风。采用新画风后，角色与分镜需重审，旧画风的候选和预演按版本失效，原文件保留。已有项目保持原画风。
+
+### 分步骤制作
+
+新项目：内容策划与文案审核 → 生成或导入分镜 → 固定角色 → 免费整条预演 → 单镜样片审核 → 批量制作 → 剪辑导出。
+
+详细操作和 AI 分工见 [小说推文制作流程](docs/小说推文制作流程.md)。先读这份操作说明，再调用付费生成。
+
+- 故事页先填写原文片段或准确梗概，再填写内容策划。也可调用文本服务起草策划（文本服务可能计费，不生成视频）。审核后的连续文案才进入 AI 分镜，导演提示词要求逐句拆分，不自行改写剧情。
+- 分镜新增叙事作用、开场状态、结束状态；这些状态随镜头提示词提交。工作台检查分镜台词与文案是否一致，并给出时长、台词密度、同场景衔接提示。这些是规则检查，不是自动审美评分。
+- 在“分镜与免费预演”中可直接生成完整文字卡 MP4，不用先制作候选，不覆盖选用结果。本机朗读只适合试听；无本机朗读或上传音轨时预演为静音。
+- 新流程付费生成前必须审核策划和当前预演，并为出镜角色配置参考素材。样片未审核前，每次只允许一个镜头、一个候选；已有有效 AI 样片时须先审核通过或淘汰，才能继续生成。导入的有效视频也可以作为样片审核。
+- 在候选窗口设置视频入点和出点，画面和原声一起裁剪；不设置时保留完整素材。外部配音长于指定区间会报错，需调整区间或音轨。候选窗口可校对字幕，但不会修改音频或自动对齐到逐字时间。
+- 文案、角色、分镜发生变化后，相关预演或样片审核失效；修改剪辑、字幕或选用素材后需重新合成。原素材及历史导出仍保留。
+
+旧项目继续沿用原流程；保存内容策划后启用上述付费检查，不会自动修改旧作品。新流程不保证模型输出无瑕疵或视频获得播放、转化；人物一致性、表演、音色和内容吸引力仍需要观看验收。当前没有整条统一配音上传与精确对齐、多轨混音或发布数据自动回收功能。
+
+角色页支持保存本地参考图，用于预览和项目归档。Seedance API 不接受本地文件或 Base64 图片；正式生成前还需填写方舟可信素材库返回的 `asset://asset-...`，或可公开访问的 HTTPS 图片地址。工作台只附加该镜头出场角色的参考素材，并在缺少远端 URI 时于付费提交前拦截。
+
+普通生成保持原来的 720p 文生视频请求；支持导入自己的图片、视频和音轨。免费预演生成的是文字分镜卡，用来验证故事节奏和流程，不是 AI 人物画面。Mac 可使用系统配音，其他系统可上传音轨。
+
+正式导出默认 **1080×1920、24fps、H.264 CRF 17、AAC 256k**（全部选用 mini 候选时为 720×1280），预演保持 540×960。素材按比例留边；未指定剪辑区间时，短视频不足则定格尾帧，配音过长则延长镜头。指定入点 / 出点后以该区间为准，过长外部配音会提示调整。音轨顺序是上传音轨 → 可选系统配音 → 素材原生音轨 → 静音。正式导出不允许夹带文字预演卡。
+
+## 制作效率与效果复盘
+
+- **分镜页批量改时长**：勾选镜头后统一设置 2–12 秒；保存前显示受影响的候选数。只有时长实际变化的镜头需要重审，其旧候选保留并过期，上传音轨解除关联。
+- **镜头制作页候选对比**：同镜头有两个及以上有效候选时，可并排查看、从头一起播放、切换左右原声试听，再选用一个候选。对比播放完整素材；剪辑区间在详情中编辑。
+- **付费制作清单**：提交前展示模型、镜头、候选数量、本次预估和剩余预算；已有有效候选的镜头会提示避免重复制作。
+- **导出页成本复盘**：查看累计视频预估、当前选用素材预估、其余生成预估及逐镜头明细。累计包含归档剧本；未知任务继续保留预估，明确提交失败的预估已释放。其余候选可能是备用素材，不等于浪费。
+- **正式版本发布效果**：每个正式导出版本可手动记录平台、发布链接、播放、点赞、转化、收入、实际总成本和复盘笔记。未知数据留空，0 表示已确认没有；只有填写实际成本和收入后才计算利润和成本回报率。共用素材的多个版本需自行分摊实际成本。
+
+新导出会将当时的成本快照写入制作清单，之后新增候选不会改写历史快照；旧导出没有历史快照时会明确提示。发布复盘保存在 `project.json` 对应的导出记录中，不修改原制作清单或视频。当前不自动同步服务商账单或平台数据。
+
+## 已制作的视频在哪里
+
+所有作品仍在 `storage/drama/`，无需迁移。
+
+- 《龙醒》观看版：`storage/drama/showcase/龙醒-1080p.mp4`。
+- 《龙醒》母版：`storage/drama/showcase/龙醒-原始母版.mp4`。
+- 其他项目：`storage/drama/<项目ID>/`，其中 `project.json` 保存剧本、角色、候选和导出文件引用。
+- 同目录的 MP4 是视频素材或成片，SRT 是字幕，JSON 还可能是制作清单或模型调用记录。按项目引用判断用途。
+- `showcase/` 及旁边的样片脚本、策划和价格资料是历史存档；历史脚本保留原模块引用，不再作为当前可执行入口。
+
+备份作品请复制整个 `storage/drama/`。`DRAMA_STORAGE` 环境变量可指定其他作品目录。同一个作品目录只能由一个服务进程使用。
+
+修改人物、画风或镜头会让相关旧候选失效，需重新审核；切换剧本时旧镜头会归档。后台任务逐步保存结果，服务重启后可手动继续；有云端任务编号的继续查询原任务，没有编号的未知提交会停止，避免重复付费。预算是视频费用估算，不包含文本费用，也不等于服务商实际账单。
+
+服务绑定本机地址，保留 Host/Origin 检查和写请求标识。设置接口隐藏密钥。当前没有公网账号系统。
+
+## 开发检查
+
+```bash
+npm --prefix frontend ci
+npm --prefix frontend run build
+npm --prefix frontend test
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m ruff check backend main.py tests
+.venv/bin/python -m pytest -q
 ```
 
-#### ② 配置项目（可选）
+`npm run build` 先执行 `vue-tsc` 类型检查，再生成部署产物。后端测试包含构建产物的真实访问检查，需要先完成前端构建。前端测试使用模拟请求，不调用模型服务。
 
-首次启动时，项目会根据 `config.example.toml` 自动创建 `config.toml`。大模型 Provider、素材来源和相关 API Key 可以直接在 WebUI 的基础设置中配置。
+测试使用模拟云端接口和真实 FFmpeg，不产生视频生成费用。FFmpeg 优先使用系统版本，否则使用 `imageio-ffmpeg` 自带版本。
 
-### Docker 部署 🐳
+`.venv/` 是 Python 环境，类似 `node_modules`；`__pycache__/`、`.pytest_cache/` 和 `.ruff_cache/` 是自动生成的缓存。业务开发时无需逐个阅读。
 
-#### ① 启动 Docker
-
-如果未安装 Docker，请先安装 https://www.docker.com/products/docker-desktop/
-
-Windows 用户可以参考微软的文档：
-
-1. https://learn.microsoft.com/zh-cn/windows/wsl/install
-2. https://learn.microsoft.com/zh-cn/windows/wsl/tutorials/wsl-containers
-
-```shell
-cd MoneyPrinterTurbo
-docker compose -f docker-compose.release.yml up
-```
-
-> 默认推荐使用 `docker-compose.release.yml`，它会直接拉取 GitHub Container Registry 上的预构建镜像：`ghcr.io/harry0703/moneyprinterturbo:latest`。
-> 如果你需要本地重新构建镜像，可以继续使用 `docker compose up`。
-> 首次启动前，请将 `config.example.toml` 复制为 `config.toml`，供容器挂载使用。
-
-#### ② 访问 WebUI
-
-打开浏览器，访问 http://127.0.0.1:8501
-
-#### ③ 访问 API 文档
-
-打开浏览器，访问 http://127.0.0.1:8080/docs 或者 http://127.0.0.1:8080/redoc
-
-> API 默认仅允许同源网页访问。只有独立网页前端需要从其他来源直接调用 API 时，才应通过环境变量 `CORS_ALLOWED_ORIGINS` 配置可信来源，例如 `http://localhost:3000,https://frontend.example.com`。curl、Postman、n8n 和其他服务端调用不受 CORS 限制。
-
-### 手动部署 📦
-
-> 视频教程
-
-- 完整的使用演示：https://v.douyin.com/iFhnwsKY/
-- 如何在 Windows 上部署：https://v.douyin.com/iFyjoW3M
-
-#### ① 创建虚拟环境
-
-推荐使用 [uv](https://docs.astral.sh/uv/) 管理 Python 环境和依赖。项目支持 Python 3.11 或更高版本，以下示例使用 Python 3.11。
-
-```shell
-git clone https://github.com/harry0703/MoneyPrinterTurbo.git
-cd MoneyPrinterTurbo
-uv python install 3.11
-uv sync --frozen
-```
-
-如果你暂时不使用 `uv`，也可以继续使用 `venv + pip`
-
-```shell
-python3.11 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-说明：
-
-- `pyproject.toml` 是主依赖定义文件
-- `uv.lock` 是锁文件，建议默认执行 `uv sync --frozen`
-- `requirements.txt` 仅保留给旧的 `pip` 安装方式兼容使用
-
-#### ② 启动 WebUI 🌐
-
-注意需要到 MoneyPrinterTurbo 项目 `根目录` 下执行以下命令
-
-###### Windows
-
-```powershell
-.\webui.bat
-```
-
-在 CMD 中也可以执行 `webui.bat`。
-`webui.bat` 会优先使用项目 `.venv` 或一键包内置 Python；如果没有找到项目 Python，但已安装 `uv`，会自动切换为 `uv run streamlit`。
-如需允许局域网内其他设备访问 WebUI，可以先执行 `set MPT_WEBUI_HOST=0.0.0.0`，再运行 `webui.bat`。
-
-###### macOS 或 Linux
-
-```shell
-sh webui.sh
-```
-
-脚本会自动使用项目虚拟环境或 `uv`，并选择可用的本地端口。如需允许局域网内其他设备访问，可以执行：
-
-```shell
-MPT_WEBUI_HOST=0.0.0.0 sh webui.sh
-```
-
-启动后，会自动打开浏览器（如果打开是空白，建议换成 **Chrome** 或者 **Edge** 打开）
-
-#### ③ 启动 API 服务 🚀
-
-```shell
-uv run python main.py
-```
-
-如果你已经手动激活了虚拟环境，也可以直接执行：
-
-```shell
-python main.py
-```
-
-#### ④ 纯命令行方式（无浏览器）⌨️
-
-如果你无法使用浏览器或端口转发，可以直接在命令行生成视频。最简单的完整视频生成命令如下：
-
-```shell
-uv run python cli.py --video-subject "人工智能如何改变日常生活"
-```
-
-字幕样式和配音参数按以下优先级取值：**命令行显式参数 > `config.toml` 中
-`[ui]` 保存的 WebUI 设置 > 内置默认值**。其余生成设置（如背景音乐、视频数量、
-段落数量等）不会自动沿用 WebUI 的保存值。若 WebUI 中选择了上传自备音频，
-命令行需要显式传入 `--custom-audio-file`，因为音频路径不会被保存。
-
-如需查看完整命令、参数说明和使用方法，可以执行：
-
-```shell
-uv run python cli.py --help
-```
-
-如需顺序执行多个任务，可通过 `--batch-file` 提供 UTF-8 JSON 数组或 JSONL
-清单。CLI 参数作为全局默认值，每个对象可覆盖 `VideoParams` 字段：
-
-```shell
-uv run python cli.py --batch-file ./tasks.json --stop-at video
-```
-
-清单最多包含 100 个任务且不超过 1 MiB。所有条目会在第一个任务启动前完成
-参数与本地文件预检；单个任务运行失败不会阻止后续条目，结束后会输出统一的
-JSON 汇总。清单中的相对自定义音频与本地素材路径以清单目录为基准。
-
-## 语音合成 🗣
-
-默认使用免费的 **Edge TTS**，在 WebUI 中显示为 **Azure TTS V1**。项目同时支持 **Azure TTS V2**、**SiliconFlow TTS**、**Google Gemini TTS**、**小米 MiMo TTS**、**ElevenLabs TTS**、自托管 **Chatterbox TTS**、**Fish Audio TTS**，以及无配音模式。
-
-可直接在 WebUI 中选择 Provider 和音色，并按照界面提示填写所需凭据。Edge TTS 不需要 API Key；[Azure TTS V2](https://portal.azure.com/) 及其他云端服务需要对应平台的凭据。Edge TTS 音色可查看：[音色列表](./docs/voice-list.txt)。
-
-## 字幕生成 📜
-
-当前支持两种字幕生成方式：
-
-- **edge**：使用 TTS 时间戳生成字幕，速度快，不需要 GPU，默认使用该模式。
-- **whisper**：使用本地 `faster-whisper` 转写音频，适用于需要更准确字幕时间轴的场景。首次使用时需要下载模型。
-
-在 `config.toml` 中修改 `subtitle_provider` 即可切换模式。Whisper 默认使用约 3 GB 的 `large-v3`；如需更小、更快的模型，可以使用约 1.6 GB 的 `large-v3-turbo`：
-
-```toml
-[app]
-subtitle_provider = "whisper"
-
-[whisper]
-model_size = "large-v3-turbo"
-```
-
-> 首次使用 Whisper 时，程序会自动从 Hugging Face 下载模型。如果当前网络无法自动下载，可以从 [Hugging Face](https://huggingface.co/Systran/faster-whisper-large-v3) 手动下载 `whisper-large-v3`。
-
-下载并解压后，将整个目录放到 `.\MoneyPrinterTurbo\models`，最终路径应为 `.\MoneyPrinterTurbo\models\whisper-large-v3`：
-
-```
-MoneyPrinterTurbo
-  ├─models
-  │   └─whisper-large-v3
-  │          config.json
-  │          model.bin
-  │          preprocessor_config.json
-  │          tokenizer.json
-  │          vocabulary.json
-```
-
-## 背景音乐 🎵
-
-用于视频的背景音乐，位于项目的 `resource/songs` 目录下。
-
-> 当前项目里面放了一些默认的音乐，来自于 YouTube 视频，如有侵权，请删除。
-
-## 字幕字体 🅰
-
-用于视频字幕的渲染，位于项目的 `resource/fonts` 目录下，你也可以放进去自己的字体。
-
-## 常见问题 🤔
-
-<details>
-<summary>如何发布到 TikTok、Instagram 或 YouTube Shorts？</summary>
-
-注册 [Upload-Post](https://upload-post.com/) 账号并获取 API Key，然后在 `config.toml` 的 `[app]` 下添加以下配置：
-
-```toml
-[app]
-upload_post_enabled = true
-upload_post_api_key = "your-api-key"
-upload_post_username = "your-username"
-upload_post_platforms = ["tiktok", "instagram", "youtube"]
-upload_post_auto_upload = true
-upload_post_youtube_privacy_status = "public"
-```
-
-保存配置并重启项目。视频生成完成后，程序会自动发布到已配置的平台。YouTube 可见性可设置为 `public`、`unlisted` 或 `private`。
-
-</details>
-
-<details>
-<summary>如何使用火山引擎方舟官方 Seedance 素材源？</summary>
-
-创建[火山方舟 API Key](https://console.volcengine.com/ark/region:ark+cn-beijing/apikey)，然后在 `[app]` 下配置：
-
-```toml
-[app]
-volcengine_seedance_api_key = "your-ark-api-key"
-volcengine_seedance_model = "doubao-seedance-1-0-pro-250528"
-volcengine_seedance_base_url = "https://ark.cn-beijing.volces.com/api/v3"
-```
-
-Seedance 专用配置为空时，会依次使用 `VOLCENGINE_ARK_API_KEY` 环境变量和已有的 `volcengine_api_key` 大模型配置。在视频源中选择“火山引擎 Seedance”，并在生成前明确确认付费任务；CLI 还需要传入 `--confirm-seedance-charge`。
-
-首版仅支持文生视频。每个片段都会创建一个异步付费方舟任务；程序只轮询同一个任务 ID，状态不明时停止继续下单，并仅生成足够覆盖配音时长的素材。
-
-</details>
-
-<details>
-<summary>RuntimeError: No ffmpeg exe could be found</summary>
-
-通常情况下，ffmpeg 会被自动下载，并且会被自动检测到。
-但是如果你的环境有问题，无法自动下载，可能会遇到如下错误：
-
-```
-RuntimeError: No ffmpeg exe could be found.
-Install ffmpeg on your system, or set the IMAGEIO_FFMPEG_EXE environment variable.
-```
-
-此时你可以从 https://www.gyan.dev/ffmpeg/builds/ 下载ffmpeg，解压后，设置 `ffmpeg_path` 为你的实际安装路径即可。
-
-```toml
-[app]
-# 请根据你的实际路径设置，注意 Windows 路径分隔符为 \\
-ffmpeg_path = "C:\\Users\\harry\\Downloads\\ffmpeg.exe"
-```
-
-</details>
-
-<details>
-<summary>OSError: [Errno 24] Too many open files</summary>
-
-这个问题是由于系统打开文件数限制导致的，可以通过修改系统的文件打开数限制来解决。
-
-查看当前限制
-
-```shell
-ulimit -n
-```
-
-如果过低，可以调高一些，比如
-
-```shell
-ulimit -n 10240
-```
-
-</details>
-
-<details>
-<summary>Whisper 模型下载失败</summary>
-
-```
-LocalEntryNotFoundError: Cannot find an appropriate cached snapshot folder for the specified revision on the local disk and
-outgoing traffic has been disabled.
-To enable repo look-ups and downloads online, pass 'local_files_only=False' as input.
-```
-
-或者
-
-```
-An error occurred while synchronizing the model Systran/faster-whisper-large-v3 from the Hugging Face Hub:
-An error happened while trying to locate the files on the Hub and we cannot find the appropriate snapshot folder for the
-specified revision on the local disk. Please check your internet connection and try again.
-Trying to load the model directly from the local cache, if it exists.
-```
-
-解决方法：[查看如何从 Hugging Face 手动下载模型](#%E5%AD%97%E5%B9%95%E7%94%9F%E6%88%90-)
-
-</details>
-
-## 反馈建议 📢
-
-- 可以提交 [issue](https://github.com/harry0703/MoneyPrinterTurbo/issues) 或者 [pull request](https://github.com/harry0703/MoneyPrinterTurbo/pulls)。
-
-## 许可证 📝
-
-点击查看 [`LICENSE`](LICENSE) 文件
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=harry0703%2FMoneyPrinterTurbo&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=harry0703/MoneyPrinterTurbo&type=date&theme=dark&legend=top-left&sealed_token=AtOR8By6GcNKd46eJLixrnucHF_99GOSBBKfc60pAm2xsDylemaYxDMcvTlPRz-G_onzDrs-hDrM0xdKkn0L6PgDin3fv02ViVtsZvgRYgk0YOzkX2KgLG8wro66VGphii-u6GNpzD8JocrqGGKvsFSpmbRqo5g-2mEDaN7-ESdtF48ZH0rDOCpoc1Mh" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=harry0703/MoneyPrinterTurbo&type=date&legend=top-left&sealed_token=AtOR8By6GcNKd46eJLixrnucHF_99GOSBBKfc60pAm2xsDylemaYxDMcvTlPRz-G_onzDrs-hDrM0xdKkn0L6PgDin3fv02ViVtsZvgRYgk0YOzkX2KgLG8wro66VGphii-u6GNpzD8JocrqGGKvsFSpmbRqo5g-2mEDaN7-ESdtF48ZH0rDOCpoc1Mh" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=harry0703/MoneyPrinterTurbo&type=date&legend=top-left&sealed_token=AtOR8By6GcNKd46eJLixrnucHF_99GOSBBKfc60pAm2xsDylemaYxDMcvTlPRz-G_onzDrs-hDrM0xdKkn0L6PgDin3fv02ViVtsZvgRYgk0YOzkX2KgLG8wro66VGphii-u6GNpzD8JocrqGGKvsFSpmbRqo5g-2mEDaN7-ESdtF48ZH0rDOCpoc1Mh" />
- </picture>
-</a>
+前端源码已迁移到 `frontend/src/`，统一部署只提供 `frontend/dist/`。模型提示词、生成参数、视频合成规则和已有作品沿用原逻辑。

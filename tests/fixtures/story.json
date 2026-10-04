@@ -1,0 +1,388 @@
+[
+  {
+    "title": "雨夜的第十三层",
+    "hook": "一栋十二层的楼，电梯却停在十三层。",
+    "synopsis": "林夏加班回家时被困电梯，同一个保安同时出现在门外和电话里。她凭疤痕识破假人，却发现自己可能早已死去。",
+    "characters": [
+      {
+        "name": "林夏",
+        "appearance": "26岁女性，黑色齐肩短发，灰色风衣，白色衬衫，左手银色手表",
+        "voice": "Tingting"
+      },
+      {
+        "name": "陈默",
+        "appearance": "30岁男性，黑色短发，藏青色保安制服，胸前旧工作牌，左眉有一道浅疤",
+        "voice": "Eddy (中文（中国大陆）)"
+      }
+    ],
+    "shots": [
+      {
+        "title": "不存在的楼层",
+        "scene": "写字楼电梯",
+        "visual": "特写：电梯楼层灯从12跳到13，冷蓝色灯光，镜头缓慢推近",
+        "narration": "这栋楼，明明只有十二层。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": []
+      },
+      {
+        "title": "门外有人",
+        "scene": "电梯门口",
+        "visual": "中景：林夏抬头望向半开的电梯门，右手紧握手机，门外黑暗",
+        "narration": "可今晚，电梯停在了十三层。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "迟到的警告",
+        "scene": "电梯内",
+        "visual": "特写：林夏手机亮起，来电震动，用表情表现紧张，不生成屏幕文字",
+        "narration": "别出电梯。外面那个人不是我。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "熟悉的面孔",
+        "scene": "十三层走廊",
+        "visual": "正面中近景：陈默站在走廊尽头，露出僵硬的微笑，背后是应急灯",
+        "narration": "林小姐，大家都在等你。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "两道声音",
+        "scene": "电梯内",
+        "visual": "近景：林夏把手机贴近耳边，看向门外，镜头固定",
+        "narration": "你在电话里，还是在门外？",
+        "speaker": "林夏",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "认出破绽",
+        "scene": "十三层走廊",
+        "visual": "面部特写：门外的陈默微笑逐渐消失，左眉疤痕清晰可见",
+        "narration": "我看见了那道疤。可位置反了。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "倒退一步",
+        "scene": "电梯内",
+        "visual": "脚部特写：林夏缓慢退回电梯，灰色风衣掠过画面，镜头低机位",
+        "narration": "不要回应他。按住关门键。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "门缝",
+        "scene": "电梯门口",
+        "visual": "极近景：金属电梯门缓慢闭合，陈默的眼睛出现在逐渐缩小的缝隙后",
+        "narration": "你上次，也是这样逃走的。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "旧照片",
+        "scene": "电梯内",
+        "visual": "近景：林夏从风衣口袋取出一张泛黄合照，神情震惊，照片细节虚焦",
+        "narration": "口袋里，多出了一张我的遗照。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "下一站",
+        "scene": "电梯内",
+        "visual": "特写：林夏抬头，红色光线落在脸上，身后电梯门再次缓慢打开",
+        "narration": "电话里说：这一次，别相信我。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "不要相信来电",
+    "hook": "电话里的救命恩人，最后让她别相信自己。",
+    "synopsis": "以一通神秘来电串联电梯惊魂，重点突出两个相同声音的真假博弈。结尾反转来电者身份。",
+    "characters": [
+      {
+        "name": "林夏",
+        "appearance": "26岁女性，黑色齐肩短发，灰色风衣，白色衬衫，左手银色手表",
+        "voice": "Tingting"
+      },
+      {
+        "name": "陈默",
+        "appearance": "30岁男性，黑色短发，藏青色保安制服，胸前旧工作牌，左眉有一道浅疤",
+        "voice": "Eddy (中文（中国大陆）)"
+      }
+    ],
+    "shots": [
+      {
+        "title": "两个陈默",
+        "scene": "写字楼电梯",
+        "visual": "林夏握着手机站在电梯里，门外的陈默与电话里的声音同时说话，近景切正反打",
+        "narration": "同一句话，从门外和电话里同时传来。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏",
+          "陈默"
+        ]
+      },
+      {
+        "title": "门外有人",
+        "scene": "电梯门口",
+        "visual": "中景：林夏抬头望向半开的电梯门，右手紧握手机，门外黑暗",
+        "narration": "可今晚，电梯停在了十三层。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "迟到的警告",
+        "scene": "电梯内",
+        "visual": "特写：林夏手机亮起，来电震动，用表情表现紧张，不生成屏幕文字",
+        "narration": "别出电梯。外面那个人不是我。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "熟悉的面孔",
+        "scene": "十三层走廊",
+        "visual": "正面中近景：陈默站在走廊尽头，露出僵硬的微笑，背后是应急灯",
+        "narration": "林小姐，大家都在等你。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "两道声音",
+        "scene": "电梯内",
+        "visual": "近景：林夏把手机贴近耳边，看向门外，镜头固定",
+        "narration": "你在电话里，还是在门外？",
+        "speaker": "林夏",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "认出破绽",
+        "scene": "十三层走廊",
+        "visual": "面部特写：门外的陈默微笑逐渐消失，左眉疤痕清晰可见",
+        "narration": "我看见了那道疤。可位置反了。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "倒退一步",
+        "scene": "电梯内",
+        "visual": "脚部特写：林夏缓慢退回电梯，灰色风衣掠过画面，镜头低机位",
+        "narration": "不要回应他。按住关门键。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "门缝",
+        "scene": "电梯门口",
+        "visual": "极近景：金属电梯门缓慢闭合，陈默的眼睛出现在逐渐缩小的缝隙后",
+        "narration": "你上次，也是这样逃走的。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "旧照片",
+        "scene": "电梯内",
+        "visual": "近景：林夏从风衣口袋取出一张泛黄合照，神情震惊，照片细节虚焦",
+        "narration": "口袋里，多出了一张我的遗照。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "来电记录",
+        "scene": "电梯内",
+        "visual": "林夏低头看向手机，脸上的恐惧变成疑惑，屏幕虚焦，不生成文字",
+        "narration": "通话记录里，没有任何来电。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "口袋里的遗照",
+    "hook": "逃出生天后，她在口袋里找到自己的遗照。",
+    "synopsis": "以遗照作为视觉伏笔，林夏在不存在的楼层遇到保安的替身，关门逃脱时发现自己身处循环。",
+    "characters": [
+      {
+        "name": "林夏",
+        "appearance": "26岁女性，黑色齐肩短发，灰色风衣，白色衬衫，左手银色手表",
+        "voice": "Tingting"
+      },
+      {
+        "name": "陈默",
+        "appearance": "30岁男性，黑色短发，藏青色保安制服，胸前旧工作牌，左眉有一道浅疤",
+        "voice": "Eddy (中文（中国大陆）)"
+      }
+    ],
+    "shots": [
+      {
+        "title": "我的遗照",
+        "scene": "写字楼电梯",
+        "visual": "特写：林夏的手拿着一张泛黄照片，照片中的自己戴着同一块银色手表",
+        "narration": "我在口袋里，找到了自己的遗照。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "门外有人",
+        "scene": "电梯门口",
+        "visual": "中景：林夏抬头望向半开的电梯门，右手紧握手机，门外黑暗",
+        "narration": "可今晚，电梯停在了十三层。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "迟到的警告",
+        "scene": "电梯内",
+        "visual": "特写：林夏手机亮起，来电震动，用表情表现紧张，不生成屏幕文字",
+        "narration": "别出电梯。外面那个人不是我。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "熟悉的面孔",
+        "scene": "十三层走廊",
+        "visual": "正面中近景：陈默站在走廊尽头，露出僵硬的微笑，背后是应急灯",
+        "narration": "林小姐，大家都在等你。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "两道声音",
+        "scene": "电梯内",
+        "visual": "近景：林夏把手机贴近耳边，看向门外，镜头固定",
+        "narration": "你在电话里，还是在门外？",
+        "speaker": "林夏",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "认出破绽",
+        "scene": "十三层走廊",
+        "visual": "面部特写：门外的陈默微笑逐渐消失，左眉疤痕清晰可见",
+        "narration": "我看见了那道疤。可位置反了。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "倒退一步",
+        "scene": "电梯内",
+        "visual": "脚部特写：林夏缓慢退回电梯，灰色风衣掠过画面，镜头低机位",
+        "narration": "不要回应他。按住关门键。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "门缝",
+        "scene": "电梯门口",
+        "visual": "极近景：金属电梯门缓慢闭合，陈默的眼睛出现在逐渐缩小的缝隙后",
+        "narration": "你上次，也是这样逃走的。",
+        "speaker": "陈默",
+        "duration": 6,
+        "characters": [
+          "陈默"
+        ]
+      },
+      {
+        "title": "照片背面",
+        "scene": "电梯内",
+        "visual": "林夏翻转照片，在背面发现一道新的红色手印，神情逐渐凝固",
+        "narration": "照片背面，出现了刚才那个人的手印。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      },
+      {
+        "title": "循环开始",
+        "scene": "电梯内",
+        "visual": "电梯灯光忽然恢复明亮，林夏又站在进入电梯的位置，镜头缓慢拉远",
+        "narration": "电梯再次打开。这一次，门外站着我。",
+        "speaker": "旁白",
+        "duration": 6,
+        "characters": [
+          "林夏"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,115 @@
+import type { Project, WorkbenchStatus } from "../src/types";
+export function projectFixture(id = "project-a"): Project {
+  const shot = {
+    id: "shot-a",
+    title: "开场",
+    scene: "室内",
+    visual: "人物推门",
+    narration: "你好",
+    speaker: "主角",
+    duration: 6,
+    characters: ["主角"],
+    approved: true,
+    audio: null,
+    selected: "candidate-a",
+    candidates: [
+      {
+        id: "candidate-a",
+        provider: "seedance",
+        status: "ready",
+        stale: false,
+        file: "a.mp4",
+        estimated_cost: 3.6,
+        subtitle_text: "已校对字幕",
+      },
+      {
+        id: "candidate-b",
+        provider: "seedance",
+        status: "ready",
+        stale: false,
+        file: "b.mp4",
+        estimated_cost: 3.6,
+      },
+    ],
+  };
+  return {
+    id,
+    title: "测试项目",
+    premise: "测试故事",
+    story_format: "dialogue",
+    style: "二维漫画",
+    style_mode: "custom",
+    style_preset_id: "",
+    budget: 100,
+    created_at: "",
+    updated_at: "",
+    script_approved: true,
+    characters_approved: true,
+    characters: [{ name: "主角", appearance: "蓝衣", voice: "Tingting" }],
+    shots: [shot],
+    scripts: [
+      {
+        id: "script-a",
+        source: "manual",
+        script: {
+          title: "故事",
+          hook: "冲突",
+          synopsis: "梗概",
+          characters: [],
+          shots: [],
+        },
+      },
+    ],
+    active_script: "script-a",
+    exports: [],
+    reserved_cost: 7.2,
+    job: {},
+    workflow_status: {
+      enabled: true,
+      style_ok: true,
+      content_ok: true,
+      preview_ok: true,
+      pilot_ok: true,
+      blockers: [],
+      warnings: [],
+      story_revision: "r1",
+      edit_revision: "e1",
+    },
+    cost_summary: {
+      estimated_video_cost: 7.2,
+      selected_cost: 3.6,
+      unselected_cost: 3.6,
+      paid_attempts: 2,
+      multiple_candidate_shots: 1,
+      unsettled_tasks: 0,
+      shots: [],
+    },
+  };
+}
+export function statusFixture(): WorkbenchStatus {
+  return {
+    local_voice: false,
+    storage: "",
+    style_presets: [],
+    video_models: {
+      mini: {
+        label: "Mini",
+        resolution: "720p",
+        min_duration: 4,
+        max_duration: 15,
+        default_estimate: 0.6,
+      },
+    },
+    settings: {
+      llm_base_url: "https://example.test/v1",
+      llm_model: "text",
+      llm_use_env_proxy: true,
+      llm_api_key_configured: false,
+      seedance_base_url: "https://example.test/video",
+      seedance_model: "mini",
+      seedance_api_key_configured: false,
+      estimate_per_second: 0.6,
+      seedance_estimates: { mini: 0.6 },
+    },
+  };
+}
